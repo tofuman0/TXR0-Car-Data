@@ -56,7 +56,7 @@ namespace TXR0_Car_Data
             if (res == 0)
             {
                 Status.Text = filename;
-                LoadDataTable(dsParamData.Tables[0]);
+                LoadDataTable(dsParamData.Tables["Car Data"]);
             }
             else if (res > 0)
                 MessageBox.Show(this, "File is an unsupported format", "Failed to load file", MessageBoxButtons.OK, MessageBoxIcon.Error);
@@ -68,7 +68,7 @@ namespace TXR0_Car_Data
             if (res == 0)
             {
                 Status.Text = filename;
-                LoadDataTable(dsParamData.Tables[0]);
+                LoadDataTable(dsParamData.Tables["Car Data"]);
             }
             else if (res > 0)
                 MessageBox.Show(this, "File is an unsupported format", "Failed to load file", MessageBoxButtons.OK, MessageBoxIcon.Error);
@@ -224,10 +224,21 @@ namespace TXR0_Car_Data
 
         private void SetDataSource(String tablename, DataTable dtData, String filter)
         {
+            ClearDataGridView();
             advancedDataGridView.DataSource = dtData;
             if(filter != null)
             {
                 (advancedDataGridView.DataSource as DataTable).DefaultView.RowFilter = String.Format(filter);
+            }
+            FormatDataGridView();
+            this.Text = "TXR0 Car Data - " + filename;
+        }
+
+        private void ClearDataGridView()
+        {
+            while(advancedDataGridView.Columns.Count > 0)
+            {
+                advancedDataGridView.Columns.RemoveAt(0);
             }
         }
 
@@ -238,41 +249,44 @@ namespace TXR0_Car_Data
 
         private void FormatDataGridView()
         {
-            foreach (DataGridViewColumn col in advancedDataGridView.Columns)
+            for (Int32 i = 0; i < advancedDataGridView.Columns.Count; i++)
             {
-                col.SortMode = DataGridViewColumnSortMode.NotSortable;
-            }
+                advancedDataGridView.Columns[i].SortMode = DataGridViewColumnSortMode.NotSortable;
 
-            if (advancedDataGridView.Columns.Contains("Car Number"))
-            {
-                //advancedDataGridView.Columns["Car Number"].Frozen = true;
-                advancedDataGridView.Columns["Car Number"].Visible = false;
-            }
+                if (advancedDataGridView.Columns[i].Name == "Car Number" || advancedDataGridView.Columns[i].Name.StartsWith("Power Graph Value "))
+                {
+                    advancedDataGridView.Columns[i].Visible = false;
+                }
+                else if (advancedDataGridView.Columns[i].Name == "Power Graph")
+                {
+                    Int32 index = advancedDataGridView.Columns[i].Index;
+                    DataGridViewButtonColumn btnCol = new DataGridViewButtonColumn();
+                    btnCol.Name = "Power Graph";
 
-            foreach(DataGridViewColumn col in advancedDataGridView.Columns)
-            {
-                col.Width = TextRenderer.MeasureText(col.HeaderText, advancedDataGridView.Font).Width + 24;
+                    advancedDataGridView.Columns.RemoveAt(index);
+                    advancedDataGridView.Columns.Insert(index, btnCol);
 
-                if (col.Width < 80)
-                    col.Width = 80;
+                    foreach(DataGridViewRow row in advancedDataGridView.Rows)
+                    {
+                        row.Cells["Power Graph"].Value = "View";
+                    }
+                }
+
+                advancedDataGridView.Columns[i].Width = TextRenderer.MeasureText(advancedDataGridView.Columns[i].HeaderText, advancedDataGridView.Font).Width + 24;
+                if (advancedDataGridView.Columns[i].Width < 80)
+                    advancedDataGridView.Columns[i].Width = 80;
             }
 
             advancedDataGridView.AutoSizeRowsMode = DataGridViewAutoSizeRowsMode.None;
-            advancedDataGridView.DefaultCellStyle.WrapMode = DataGridViewTriState.False;
-
-            //advancedDataGridView.Columns["Effect ID"].Frozen = true;
-            //advancedDataGridView.Columns["Effect ID"].Width = 96;
-            //advancedDataGridView.Columns["String"].Width = 516;
-            //advancedDataGridView.Columns["Detail"].Visible = false;
-            
+            advancedDataGridView.DefaultCellStyle.WrapMode = DataGridViewTriState.False;            
         }
 
         private void advancedDataGridView_DataBindingComplete(object sender, DataGridViewBindingCompleteEventArgs e)
         {
             if (advancedDataGridView.DataSource != null)
             {
-                FormatDataGridView();
-                this.Text = "TXR0 Car Data - " + filename;
+                //FormatDataGridView();
+                //this.Text = "TXR0 Car Data - " + filename;
             }
         }
 
@@ -307,6 +321,16 @@ namespace TXR0_Car_Data
 
             var headerBounds = new Rectangle(e.RowBounds.Left, e.RowBounds.Top, grid.RowHeadersWidth, e.RowBounds.Height);
             e.Graphics.DrawString(rowIdx, this.Font, SystemBrushes.ControlText, headerBounds, centerFormat);
+        }
+
+        private void advancedDataGridView_CellContentClick(object sender, DataGridViewCellEventArgs e)
+        {
+            var senderGrid = (DataGridView)sender;
+
+            if (e.RowIndex >= 0 && senderGrid.Columns[e.ColumnIndex] is DataGridViewButtonColumn && senderGrid.Columns[e.ColumnIndex].Name == "Power Graph")
+            {
+                MessageBox.Show("POWER GRAPH!");
+            }
         }
     }
 }

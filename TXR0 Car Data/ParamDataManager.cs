@@ -16,7 +16,8 @@ namespace TXR0_Car_Data
             Data,
             DataLength,
             Index,
-            Index1
+            Index1,
+            Button
         };
         #region Structures
         public struct FileStructure
@@ -51,7 +52,7 @@ namespace TXR0_Car_Data
         #region File Structures
         public readonly List<FileStructure> fsCarData = new List<FileStructure>() {
             new FileStructure(VarType.Index1, typeof(Int32), "Car Number"),
-            new FileStructure(VarType.Data, typeof(Byte), "Turbo"),
+            new FileStructure(VarType.Data, typeof(Byte), "Car Flags"),
             new FileStructure(VarType.Data, typeof(Byte), "Unknown1_", 3),
             new FileStructure(VarType.Data, typeof(Byte), "Drive Type"),
             new FileStructure(VarType.Data, typeof(Byte), "Unknown2"),
@@ -69,6 +70,7 @@ namespace TXR0_Car_Data
             new FileStructure(VarType.Data, typeof(UInt16), "Torque RPM ", 2),
             new FileStructure(VarType.Data, typeof(UInt16), "RPM Limit"),
             new FileStructure(VarType.Data, typeof(UInt16), "RPM Idle"),
+            new FileStructure(VarType.Button, typeof(String), "Power Graph"),
             new FileStructure(VarType.Data, typeof(Single), "Power Graph Value ", 130),
             new FileStructure(VarType.Data, typeof(Single), "Length"),
             new FileStructure(VarType.Data, typeof(Single), "Width"),
@@ -87,7 +89,8 @@ namespace TXR0_Car_Data
             new FileStructure(VarType.Data, typeof(Single), "Unknown10_", 3),
             new FileStructure(VarType.Data, typeof(UInt16), "Unknown11_", 2),
             new FileStructure(VarType.Data, typeof(Single), "Unknown12_", 3),
-            new FileStructure(VarType.Data, typeof(UInt16), "Unknown13_", 6)
+            new FileStructure(VarType.Data, typeof(UInt16), "Unknown13_", 3),
+            new FileStructure(VarType.Data, typeof(Byte), "Unknown14_", 6)
         };                                                         
         #endregion File Structures
         #region Data Loading
@@ -195,6 +198,10 @@ namespace TXR0_Car_Data
                                 length = GetValue(data, dataOffset, structure.dataType);
                                 dataOffset += GetTypeLength(structure.dataType);
                             }
+                            else if (structure.varType == VarType.Button)
+                            {
+                                newRow[structure.name] = "btn:" + structure.name;
+                            }
                             else if (structure.varType == VarType.Index || structure.varType == VarType.Index1)
                             {
                                 newRow[structure.name] = (structure.varType == VarType.Index) ? i : i + 1;
@@ -244,54 +251,70 @@ namespace TXR0_Car_Data
             {
                 using(DataTable table = dsParamData.Tables[TableName])
                 {
-                    Byte[] data = new Byte[table.Rows.Count * 0x94]; // Create Data buffer for Car Data. Entry size is 0x94
+                    Byte[] data = new Byte[table.Rows.Count * 0x30C]; // Create Data buffer for Car Data. Entry size is 0x30C
                     MemoryStream datastream = new MemoryStream(data);
                     BinaryWriter datawriter = new BinaryWriter(datastream);
                     foreach (DataRow row in table.Rows)
                     {
                         foreach (FileStructure structure in fsCarData)
                         {
-                            if (structure.varType != VarType.Index && structure.varType != VarType.Index1) // Ignore index var types as those are used by this app not game
+                            if (structure.varType != VarType.Index && structure.varType != VarType.Index1 && structure.varType != VarType.Button) // Ignore index and button var types as those are used by this app not game
                             {
-                                var cell = row[structure.name];
-                                if (structure.dataType == typeof(Int32))
+                                Func<String, Int32> writedata = (String name) =>
                                 {
-                                    datawriter.Write(Convert.ToInt32(cell));
-                                }
-                                else if (structure.dataType == typeof(UInt32))
-                                {
-                                    datawriter.Write(Convert.ToUInt32(cell));
-                                }
-                                else if (structure.dataType == typeof(Int16))
-                                {
-                                    datawriter.Write(Convert.ToInt16(cell));
-                                }
-                                else if (structure.dataType == typeof(UInt16))
-                                {
-                                    datawriter.Write(Convert.ToUInt16(cell));
-                                }
-                                else if (structure.dataType == typeof(SByte))
-                                {
-                                    datawriter.Write(Convert.ToSByte(cell));
-                                }
-                                else if (structure.dataType == typeof(Byte))
-                                {
-                                    datawriter.Write(Convert.ToByte(cell));
-                                }
-                                else if (structure.dataType == typeof(String))
-                                {
-                                    Byte[] tempstringbuf = new Byte[structure.length];
-                                    //Byte[] cellbytes = Encoding.ASCII.GetBytes(cell.ToString());
-                                    Byte[] cellbytes = System.Text.Encoding.GetEncoding(932).GetBytes(cell.ToString());
-                                    for (Int32 i = 0; i < cellbytes.Count(); i++)
+                                    var cell = row[name];
+                                    if (structure.dataType == typeof(Int32))
                                     {
-                                        tempstringbuf[i] = cellbytes[i];
+                                        datawriter.Write(Convert.ToInt32(cell));
                                     }
-                                    datawriter.Write(tempstringbuf);
-                                }
-                                else if (structure.dataType == typeof(Single))
+                                    else if (structure.dataType == typeof(UInt32))
+                                    {
+                                        datawriter.Write(Convert.ToUInt32(cell));
+                                    }
+                                    else if (structure.dataType == typeof(Int16))
+                                    {
+                                        datawriter.Write(Convert.ToInt16(cell));
+                                    }
+                                    else if (structure.dataType == typeof(UInt16))
+                                    {
+                                        datawriter.Write(Convert.ToUInt16(cell));
+                                    }
+                                    else if (structure.dataType == typeof(SByte))
+                                    {
+                                        datawriter.Write(Convert.ToSByte(cell));
+                                    }
+                                    else if (structure.dataType == typeof(Byte))
+                                    {
+                                        datawriter.Write(Convert.ToByte(cell));
+                                    }
+                                    else if (structure.dataType == typeof(String))
+                                    {
+                                        Byte[] tempstringbuf = new Byte[structure.length];
+                                        //Byte[] cellbytes = Encoding.ASCII.GetBytes(cell.ToString());
+                                        Byte[] cellbytes = System.Text.Encoding.GetEncoding(932).GetBytes(cell.ToString());
+                                        for (Int32 i = 0; i < cellbytes.Count(); i++)
+                                        {
+                                            tempstringbuf[i] = cellbytes[i];
+                                        }
+                                        datawriter.Write(tempstringbuf);
+                                    }
+                                    else if (structure.dataType == typeof(Single))
+                                    {
+                                        datawriter.Write(Convert.ToSingle(cell));
+                                    }
+                                    return 0;
+                                };
+
+                                if (structure.dataType != typeof(String) && structure.length > 0)
                                 {
-                                    datawriter.Write(Convert.ToSingle(cell));
+                                    for (Int32 i = 0; i < structure.length; i++)
+                                    {
+                                        writedata(structure.name + Convert.ToString(i + 1));
+                                    }
+                                }
+                                else
+                                {
+                                    writedata(structure.name);
                                 }
                             }
                         }

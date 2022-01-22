@@ -37,13 +37,13 @@
             this.openToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.openFromELFToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.saveToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.saveToELFToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStripSeparator1 = new System.Windows.Forms.ToolStripSeparator();
             this.exitToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.helpToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.aboutToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.contextMenuStripMain = new System.Windows.Forms.ContextMenuStrip(this.components);
             this.advancedDataGridView = new Zuby.ADGV.AdvancedDataGridView();
-            this.saveToELFToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.statusStripMain.SuspendLayout();
             this.menuStripMain.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.advancedDataGridView)).BeginInit();
@@ -116,6 +116,13 @@
             this.saveToolStripMenuItem.Text = "Save";
             this.saveToolStripMenuItem.Click += new System.EventHandler(this.SaveToolStripMenuItem_Click);
             // 
+            // saveToELFToolStripMenuItem
+            // 
+            this.saveToELFToolStripMenuItem.Name = "saveToELFToolStripMenuItem";
+            this.saveToELFToolStripMenuItem.Size = new System.Drawing.Size(242, 26);
+            this.saveToELFToolStripMenuItem.Text = "Save To ELF";
+            this.saveToELFToolStripMenuItem.Click += new System.EventHandler(this.saveToELFToolStripMenuItem_Click);
+            // 
             // toolStripSeparator1
             // 
             this.toolStripSeparator1.Name = "toolStripSeparator1";
@@ -171,15 +178,9 @@
             this.advancedDataGridView.TabIndex = 6;
             this.advancedDataGridView.SortStringChanged += new System.EventHandler<Zuby.ADGV.AdvancedDataGridView.SortEventArgs>(this.advancedDataGridView_SortStringChanged);
             this.advancedDataGridView.FilterStringChanged += new System.EventHandler<Zuby.ADGV.AdvancedDataGridView.FilterEventArgs>(this.advancedDataGridView_FilterStringChanged);
+            this.advancedDataGridView.CellContentClick += new System.Windows.Forms.DataGridViewCellEventHandler(this.advancedDataGridView_CellContentClick);
             this.advancedDataGridView.DataBindingComplete += new System.Windows.Forms.DataGridViewBindingCompleteEventHandler(this.advancedDataGridView_DataBindingComplete);
             this.advancedDataGridView.RowPostPaint += new System.Windows.Forms.DataGridViewRowPostPaintEventHandler(this.advancedDataGridView_RowPostPaint);
-            // 
-            // saveToELFToolStripMenuItem
-            // 
-            this.saveToELFToolStripMenuItem.Name = "saveToELFToolStripMenuItem";
-            this.saveToELFToolStripMenuItem.Size = new System.Drawing.Size(242, 26);
-            this.saveToELFToolStripMenuItem.Text = "Save To ELF";
-            this.saveToELFToolStripMenuItem.Click += new System.EventHandler(this.saveToELFToolStripMenuItem_Click);
             // 
             // MainForm
             // 
