@@ -44,9 +44,13 @@
             this.aboutToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.contextMenuStripMain = new System.Windows.Forms.ContextMenuStrip(this.components);
             this.advancedDataGridView = new Zuby.ADGV.AdvancedDataGridView();
+            this.contextMenuActions = new System.Windows.Forms.ContextMenuStrip(this.components);
+            this.toolStripCopy = new System.Windows.Forms.ToolStripMenuItem();
+            this.toolStripPaste = new System.Windows.Forms.ToolStripMenuItem();
             this.statusStripMain.SuspendLayout();
             this.menuStripMain.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.advancedDataGridView)).BeginInit();
+            this.contextMenuActions.SuspendLayout();
             this.SuspendLayout();
             // 
             // statusStripMain
@@ -170,6 +174,7 @@
             this.advancedDataGridView.FilterAndSortEnabled = true;
             this.advancedDataGridView.Location = new System.Drawing.Point(0, 28);
             this.advancedDataGridView.Margin = new System.Windows.Forms.Padding(4);
+            this.advancedDataGridView.MultiSelect = false;
             this.advancedDataGridView.Name = "advancedDataGridView";
             this.advancedDataGridView.RightToLeft = System.Windows.Forms.RightToLeft.No;
             this.advancedDataGridView.RowHeadersWidth = 51;
@@ -181,6 +186,34 @@
             this.advancedDataGridView.CellContentClick += new System.Windows.Forms.DataGridViewCellEventHandler(this.advancedDataGridView_CellContentClick);
             this.advancedDataGridView.DataBindingComplete += new System.Windows.Forms.DataGridViewBindingCompleteEventHandler(this.advancedDataGridView_DataBindingComplete);
             this.advancedDataGridView.RowPostPaint += new System.Windows.Forms.DataGridViewRowPostPaintEventHandler(this.advancedDataGridView_RowPostPaint);
+            this.advancedDataGridView.MouseClick += new System.Windows.Forms.MouseEventHandler(this.advancedDataGridView_MouseClick);
+            // 
+            // contextMenuActions
+            // 
+            this.contextMenuActions.ImageScalingSize = new System.Drawing.Size(20, 20);
+            this.contextMenuActions.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.toolStripCopy,
+            this.toolStripPaste});
+            this.contextMenuActions.Name = "contextMenuActions";
+            this.contextMenuActions.Size = new System.Drawing.Size(252, 52);
+            this.contextMenuActions.Text = "Actions";
+            // 
+            // toolStripCopy
+            // 
+            this.toolStripCopy.Name = "toolStripCopy";
+            this.toolStripCopy.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.C)));
+            this.toolStripCopy.Size = new System.Drawing.Size(251, 24);
+            this.toolStripCopy.Text = "Copy Power Graph";
+            this.toolStripCopy.Click += new System.EventHandler(this.toolStripCopy_Click);
+            // 
+            // toolStripPaste
+            // 
+            this.toolStripPaste.Enabled = false;
+            this.toolStripPaste.Name = "toolStripPaste";
+            this.toolStripPaste.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.V)));
+            this.toolStripPaste.Size = new System.Drawing.Size(251, 24);
+            this.toolStripPaste.Text = "Paste Power Graph";
+            this.toolStripPaste.Click += new System.EventHandler(this.toolStripPaste_Click);
             // 
             // MainForm
             // 
@@ -201,6 +234,7 @@
             this.menuStripMain.ResumeLayout(false);
             this.menuStripMain.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)(this.advancedDataGridView)).EndInit();
+            this.contextMenuActions.ResumeLayout(false);
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -221,6 +255,9 @@
         private Zuby.ADGV.AdvancedDataGridView advancedDataGridView;
         private System.Windows.Forms.ToolStripMenuItem openFromELFToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem saveToELFToolStripMenuItem;
+        private System.Windows.Forms.ContextMenuStrip contextMenuActions;
+        private System.Windows.Forms.ToolStripMenuItem toolStripCopy;
+        private System.Windows.Forms.ToolStripMenuItem toolStripPaste;
     }
 }
 

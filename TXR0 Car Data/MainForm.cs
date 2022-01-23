@@ -29,6 +29,7 @@ namespace TXR0_Car_Data
         private DataSet dsParamData = null;
         private String filename = null;
         private bool unsaved = false;
+        private Int32 rowToCopy = -1;
         #endregion Variables
 
         public MainForm()
@@ -245,6 +246,7 @@ namespace TXR0_Car_Data
         private void LoadDataTable(DataTable dtData, String filter = null)
         {
             SetDataSource(dtData.TableName, dtData, filter);
+            rowToCopy = -1;
         }
 
         private void FormatDataGridView()
@@ -293,6 +295,7 @@ namespace TXR0_Car_Data
         private void advancedDataGridView_FilterStringChanged(object sender, Zuby.ADGV.AdvancedDataGridView.FilterEventArgs e)
         {
             (advancedDataGridView.DataSource as DataTable).DefaultView.RowFilter = e.FilterString;
+            FormatDataGridView();
         }
 
         private void advancedDataGridView_SortStringChanged(object sender, Zuby.ADGV.AdvancedDataGridView.SortEventArgs e)
@@ -309,7 +312,6 @@ namespace TXR0_Car_Data
         private void advancedDataGridView_RowPostPaint(object sender, DataGridViewRowPostPaintEventArgs e)
         {
             var grid = sender as DataGridView;
-            //var rowIdx = (e.RowIndex + 1).ToString();
             var rowIdx = grid.Rows[e.RowIndex].Cells["Car Number"].Value.ToString();
 
             var centerFormat = new StringFormat()
@@ -329,7 +331,57 @@ namespace TXR0_Car_Data
 
             if (e.RowIndex >= 0 && senderGrid.Columns[e.ColumnIndex] is DataGridViewButtonColumn && senderGrid.Columns[e.ColumnIndex].Name == "Power Graph")
             {
-                MessageBox.Show("POWER GRAPH!");
+                PowerGraph powerGraph = new PowerGraph(senderGrid.Rows[e.RowIndex]);
+                var res = powerGraph.ShowDialog();
+                if (res == DialogResult.OK)
+                {
+                    for(Int32 i = 0; i < powerGraph.datacells.Cells.Count; i++)
+                    {
+                        senderGrid.Rows[e.ColumnIndex].Cells[i].Value = powerGraph.datacells.Cells[i].Value;
+                    }
+                }
+            }
+        }
+
+        private void advancedDataGridView_MouseClick(object sender, MouseEventArgs e)
+        {
+            var cell = advancedDataGridView.HitTest(e.Location.X, e.Location.Y);
+            if (cell.Type == DataGridViewHitTestType.Cell && advancedDataGridView.DataSource != null && e.Button == MouseButtons.Right)
+            {
+                if (rowToCopy != -1)
+                {
+                    contextMenuActions.Items["toolStripPaste"].Enabled = true;
+                }
+                else
+                {
+                    contextMenuActions.Items["toolStripPaste"].Enabled = false;
+                }
+                advancedDataGridView.Rows[cell.RowIndex].Cells[cell.ColumnIndex].Selected = true;
+                contextMenuActions.Show(Cursor.Position);
+            }
+        }
+
+        private void toolStripCopy_Click(object sender, EventArgs e)
+        {
+            if(advancedDataGridView.SelectedCells.Count > 0)
+                rowToCopy = advancedDataGridView.SelectedCells[0].RowIndex;
+        }
+
+        private void toolStripPaste_Click(object sender, EventArgs e)
+        {
+            if(rowToCopy != -1 && advancedDataGridView.SelectedCells.Count > 0)
+            {
+                Int32 rowToCopyTo = advancedDataGridView.SelectedCells[0].RowIndex;
+                for(Int32 i = 0; i < 130; i++) // Power Graph Value Count is 130
+                {
+                    advancedDataGridView.Rows[rowToCopyTo].Cells["Power Graph Value " + (i + 1)].Value = advancedDataGridView.Rows[rowToCopy].Cells["Power Graph Value " + (i + 1)].Value;
+                }
+                advancedDataGridView.Rows[rowToCopyTo].Cells["BHP RPM 1"].Value = advancedDataGridView.Rows[rowToCopy].Cells["BHP RPM 1"].Value;
+                advancedDataGridView.Rows[rowToCopyTo].Cells["Torque"].Value = advancedDataGridView.Rows[rowToCopy].Cells["Torque"].Value;
+                advancedDataGridView.Rows[rowToCopyTo].Cells["Torque RPM 1"].Value = advancedDataGridView.Rows[rowToCopy].Cells["Torque RPM 1"].Value;
+                advancedDataGridView.Rows[rowToCopyTo].Cells["Torque RPM 2"].Value = advancedDataGridView.Rows[rowToCopy].Cells["Torque RPM 2"].Value;
+                advancedDataGridView.Rows[rowToCopyTo].Cells["RPM Limit"].Value = advancedDataGridView.Rows[rowToCopy].Cells["RPM Limit"].Value;
+                advancedDataGridView.Rows[rowToCopyTo].Cells["RPM Idle"].Value = advancedDataGridView.Rows[rowToCopy].Cells["RPM Idle"].Value;
             }
         }
     }
