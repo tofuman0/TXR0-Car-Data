@@ -247,6 +247,7 @@ namespace TXR0_Car_Data
         {
             SetDataSource(dtData.TableName, dtData, filter);
             rowToCopy = -1;
+            pushToPCSX2ToolStripMenuItem.Enabled = true;
         }
 
         private void FormatDataGridView()
@@ -383,6 +384,39 @@ namespace TXR0_Car_Data
                 advancedDataGridView.Rows[rowToCopyTo].Cells["RPM Limit"].Value = advancedDataGridView.Rows[rowToCopy].Cells["RPM Limit"].Value;
                 advancedDataGridView.Rows[rowToCopyTo].Cells["RPM Idle"].Value = advancedDataGridView.Rows[rowToCopy].Cells["RPM Idle"].Value;
             }
+        }
+
+        private void pullFromPCSX2ToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            String res;
+            if (paramDataManager.PCSX2.OpenProcess("pcsx2.exe", out res) == true)
+            {
+                dsParamData = paramDataManager.PullFromPCSX2("Car Data", paramDataManager.fsCarData);
+                if (dsParamData == null)
+                {
+                    MessageBox.Show(this, "Failed to pull data from PCSX2", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    return;
+                }
+                else
+                {
+                    Status.Text = "PCSX2";
+                    LoadDataTable(dsParamData.Tables["Car Data"]);
+                }
+            }
+            else
+                MessageBox.Show(this, "Failed to attach to PCSX2: " + res, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+        }
+
+        private void pushToPCSX2ToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            String res;
+            if (paramDataManager.PCSX2.OpenProcess("pcsx2.exe", out res) == true)
+            {
+                if(paramDataManager.PushToPCSX2() == false)
+                    MessageBox.Show(this, "Failed to push data to PCSX2", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
+            else
+                MessageBox.Show(this, "Failed to attach to PCSX2: " + res, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
         }
     }
 }

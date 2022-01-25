@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using System.Data;
 using System.IO;
 using System.Windows.Forms;
+using Memory;
 
 namespace TXR0_Car_Data
 {
@@ -48,6 +49,7 @@ namespace TXR0_Car_Data
             new ELFType(0xC3859771, 0x1E0500, "JP")
         };
         public String elfType = "Unknown";
+        public Mem PCSX2 = new Mem();
         #endregion Variables
         #region File Structures
         public readonly List<FileStructure> fsCarData = new List<FileStructure>() {
@@ -101,7 +103,8 @@ namespace TXR0_Car_Data
             new FileStructure(VarType.Data, typeof(Single), "Weight Transfer Rear"),
             new FileStructure(VarType.Data, typeof(UInt16), "Unknown11_", 2),
             new FileStructure(VarType.Data, typeof(Single), "Unknown12_", 3),
-            new FileStructure(VarType.Data, typeof(UInt16), "Unknown13_", 3),
+            new FileStructure(VarType.Data, typeof(UInt16), "Unknown13_", 2),
+            new FileStructure(VarType.Data, typeof(UInt16), "Price"),
             new FileStructure(VarType.Data, typeof(Byte), "Engine Position"),
             new FileStructure(VarType.Data, typeof(Byte), "Drivetrain Flag"),
             new FileStructure(VarType.Data, typeof(Byte), "Unknown14_", 4)
@@ -160,9 +163,7 @@ namespace TXR0_Car_Data
                 }
                 // Clear potential already loaded data
                 dsParamData = null;
-                if ((dsParamData = LoadTableData(data, TableName, FileStructure)) == null)
-                    return null;
-                return dsParamData;
+                return LoadTableData(data, TableName, FileStructure);
             }
             //catch(Exception ex)
             //{
@@ -257,6 +258,63 @@ namespace TXR0_Car_Data
             //    return null;
             //}
         }
+
+        private Int32 FindPCSX2Offset(Byte[] bytes)
+        {
+            if (PCSX2.mProc.Process != null)
+            {
+                String byteString = "";
+                Int32 offset;
+                foreach (Byte thisByte in bytes)
+                {
+                    byteString += thisByte.ToString("X") + " ";
+                }
+                byteString = byteString.Substring(0, byteString.Length - 1);
+                var find = PCSX2.AoBScan(byteString, true, true);
+                find.Wait();
+                var res = find.Result;
+                offset = Convert.ToInt32(res.SingleOrDefault());
+                return offset;
+            }
+            else
+                return 0;
+        }
+        public DataSet PullFromPCSX2(String TableName, List<FileStructure> FileStructure)
+        {
+            if (PCSX2.mProc.Process != null)
+            {
+                Byte[] data = null;
+                Int32 LoadedGameStringPtr = FindPCSX2Offset(Encoding.ASCII.GetBytes("BOOT2 = cdrom0:"));
+                if (LoadedGameStringPtr != 0)
+                {
+                    String LoadedGame = PCSX2.ReadString(LoadedGameStringPtr.ToString("X"));
+                    String dataOffset = "202D8EA0";
+                    if (LoadedGame.Contains("SLUS_201.89")) // US
+                        dataOffset = "202D8EA0";
+                    else if (LoadedGame.Contains("SLES_501.15")) // EU
+                        dataOffset = "202D9860";
+                    //else if (LoadedGame.Contains("SLPS_250.28")) // JP
+                    //    dataOffset = "";
+                    if (dataOffset != "")
+                    {
+                        data = PCSX2.ReadBytes(dataOffset, 137280);
+                        if (data.Length != 137280)
+                            return null;
+                    }
+                }
+                else
+                    return null;
+                if (data != null)
+                {
+                    dsParamData = null;
+                    return LoadTableData(data, TableName, FileStructure);
+                }
+                else
+                    return null;
+            }
+            else
+                return null;
+        }
         #endregion Data Loading
         #region Data Saving
         private Byte[] GetByteDataFromTable(String TableName)
@@ -338,6 +396,7 @@ namespace TXR0_Car_Data
             }
             return null;
         }
+
         public bool SaveELF(String FileName)
         {
             Byte[] data = GetByteDataFromTable("Car Data");
@@ -377,6 +436,35 @@ namespace TXR0_Car_Data
                     stream.Write(data, 0, data.Length);
                     return true;
                 }
+            }
+            else
+                return false;
+        }
+        public bool PushToPCSX2()
+        {
+            if (PCSX2.mProc.Process != null)
+            {
+                Int32 LoadedGameStringPtr = FindPCSX2Offset(Encoding.ASCII.GetBytes("BOOT2 = cdrom0:"));
+                if (LoadedGameStringPtr != 0)
+                {
+                    String LoadedGame = PCSX2.ReadString(LoadedGameStringPtr.ToString("X"));
+                    String dataOffset = "202D8EA0";
+                    if (LoadedGame.Contains("SLUS_201.89")) // US
+                        dataOffset = "202D8EA0";
+                    else if (LoadedGame.Contains("SLES_501.15")) // EU
+                        dataOffset = "202D9860";
+                    //else if (LoadedGame.Contains("SLPS_250.28")) // JP
+                    //    dataOffset = "";
+                    if (dataOffset != "")
+                    {
+                        Byte[] data = GetByteDataFromTable("Car Data");
+                        PCSX2.WriteBytes(dataOffset, data);
+                        return true;
+                    }
+                    else
+                        return false;
+                }
+                return false;
             }
             else
                 return false;
