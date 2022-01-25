@@ -267,7 +267,7 @@ namespace TXR0_Car_Data
                 Int32 offset;
                 foreach (Byte thisByte in bytes)
                 {
-                    byteString += thisByte.ToString("X") + " ";
+                    byteString += thisByte.ToString("X02") + " ";
                 }
                 byteString = byteString.Substring(0, byteString.Length - 1);
                 var find = PCSX2.AoBScan(byteString, true, true);
@@ -284,17 +284,11 @@ namespace TXR0_Car_Data
             if (PCSX2.mProc.Process != null)
             {
                 Byte[] data = null;
-                Int32 LoadedGameStringPtr = FindPCSX2Offset(Encoding.ASCII.GetBytes("BOOT2 = cdrom0:"));
-                if (LoadedGameStringPtr != 0)
+                Int32 LoadedGameDataPtr = FindPCSX2Offset(new Byte[] { 0x9D, 0x00, 0x59, 0x01, 0x01, 0x00, 0x9E, 0x00, 0x5A, 0x01, 0x01, 0x00, 0x9F, 0x00, 0x5B, 0x01, 0x01, 0x00, 0xA0, 0x00, 0x5C, 0x01, 0x01, 0x00, 0xA1, 0x00, 0x5D, 0x01, 0x01, 0x00, 0xA2, 0x00, 0x5E, 0x01, 0x01, 0x00, 0xA3, 0x00, 0x5F, 0x01, 0x01, 0x00, 0xA4, 0x00, 0x60, 0x01, 0x01, 0x00, 0xA5, 0x00, 0x61, 0x01, 0x01, 0x00, 0xA6, 0x00, 0x62, 0x01, 0x01, 0x00, 0xA7, 0x00, 0x63, 0x01, 0x01, 0x00, 0xA8, 0x00, 0x64, 0x01, 0x01, 0x00, 0xA9, 0x00, 0x65, 0x01, 0x01, 0x00, 0xAA, 0x00, 0x66, 0x01, 0x01, 0x00, 0xAB, 0x00, 0x67, 0x01, 0x01, 0x00, 0xAC, 0x00, 0x68, 0x01, 0x01, 0x00 });
+                if (LoadedGameDataPtr != 0)
                 {
-                    String LoadedGame = PCSX2.ReadString(LoadedGameStringPtr.ToString("X"));
-                    String dataOffset = "202D8EA0";
-                    if (LoadedGame.Contains("SLUS_201.89")) // US
-                        dataOffset = "202D8EA0";
-                    else if (LoadedGame.Contains("SLES_501.15")) // EU
-                        dataOffset = "202D9860";
-                    //else if (LoadedGame.Contains("SLPS_250.28")) // JP
-                    //    dataOffset = "";
+                    LoadedGameDataPtr += 0x660; // Offset which adjusts to car data
+                    String dataOffset = LoadedGameDataPtr.ToString("X");
                     if (dataOffset != "")
                     {
                         data = PCSX2.ReadBytes(dataOffset, 137280);
@@ -444,17 +438,11 @@ namespace TXR0_Car_Data
         {
             if (PCSX2.mProc.Process != null)
             {
-                Int32 LoadedGameStringPtr = FindPCSX2Offset(Encoding.ASCII.GetBytes("BOOT2 = cdrom0:"));
-                if (LoadedGameStringPtr != 0)
+                Int32 LoadedGameDataPtr = FindPCSX2Offset(new Byte[] { 0x9D, 0x00, 0x59, 0x01, 0x01, 0x00, 0x9E, 0x00, 0x5A, 0x01, 0x01, 0x00, 0x9F, 0x00, 0x5B, 0x01, 0x01, 0x00, 0xA0, 0x00, 0x5C, 0x01, 0x01, 0x00, 0xA1, 0x00, 0x5D, 0x01, 0x01, 0x00, 0xA2, 0x00, 0x5E, 0x01, 0x01, 0x00, 0xA3, 0x00, 0x5F, 0x01, 0x01, 0x00, 0xA4, 0x00, 0x60, 0x01, 0x01, 0x00, 0xA5, 0x00, 0x61, 0x01, 0x01, 0x00, 0xA6, 0x00, 0x62, 0x01, 0x01, 0x00, 0xA7, 0x00, 0x63, 0x01, 0x01, 0x00, 0xA8, 0x00, 0x64, 0x01, 0x01, 0x00, 0xA9, 0x00, 0x65, 0x01, 0x01, 0x00, 0xAA, 0x00, 0x66, 0x01, 0x01, 0x00, 0xAB, 0x00, 0x67, 0x01, 0x01, 0x00, 0xAC, 0x00, 0x68, 0x01, 0x01, 0x00 });
+                if (LoadedGameDataPtr != 0)
                 {
-                    String LoadedGame = PCSX2.ReadString(LoadedGameStringPtr.ToString("X"));
-                    String dataOffset = "202D8EA0";
-                    if (LoadedGame.Contains("SLUS_201.89")) // US
-                        dataOffset = "202D8EA0";
-                    else if (LoadedGame.Contains("SLES_501.15")) // EU
-                        dataOffset = "202D9860";
-                    //else if (LoadedGame.Contains("SLPS_250.28")) // JP
-                    //    dataOffset = "";
+                    LoadedGameDataPtr += 0x660; // Offset which adjusts to car data
+                    String dataOffset = LoadedGameDataPtr.ToString("X");
                     if (dataOffset != "")
                     {
                         Byte[] data = GetByteDataFromTable("Car Data");

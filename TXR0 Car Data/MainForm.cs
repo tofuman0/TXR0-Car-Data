@@ -56,7 +56,6 @@ namespace TXR0_Car_Data
             Int32 res = OpenFileDialog();
             if (res == 0)
             {
-                Status.Text = filename;
                 LoadDataTable(dsParamData.Tables["Car Data"]);
             }
             else if (res > 0)
@@ -68,7 +67,6 @@ namespace TXR0_Car_Data
             Int32 res = OpenFileDialog(true); // Load from ELF File
             if (res == 0)
             {
-                Status.Text = filename;
                 LoadDataTable(dsParamData.Tables["Car Data"]);
             }
             else if (res > 0)
@@ -233,6 +231,7 @@ namespace TXR0_Car_Data
             }
             FormatDataGridView();
             this.Text = "TXR0 Car Data - " + filename;
+            Status.Text = filename;
         }
 
         private void ClearDataGridView()
@@ -399,7 +398,7 @@ namespace TXR0_Car_Data
                 }
                 else
                 {
-                    Status.Text = "PCSX2";
+                    filename = "Loaded from PCSX2";
                     LoadDataTable(dsParamData.Tables["Car Data"]);
                 }
             }
