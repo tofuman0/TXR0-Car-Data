@@ -190,7 +190,6 @@ namespace TXR0_Car_Data
         }
         private DataSet LoadTableData(Byte[] data, String TableName, List<FileStructure> structures)
         {
-            //try
             {
                 Int32 dataOffset = 0;
                 Int32 dataCount = 0;
@@ -253,12 +252,21 @@ namespace TXR0_Car_Data
                 else
                     return null;
             }
-            //catch (Exception)
-            //{
-            //    return null;
-            //}
         }
-
+        private Int32 FindPCSX2Offset(String byteString)
+        {
+            if (PCSX2.mProc.Process != null)
+            {
+                Int32 offset;
+                var find = PCSX2.AoBScan(byteString, true, true);
+                find.Wait();
+                var res = find.Result;
+                offset = Convert.ToInt32(res.SingleOrDefault());
+                return offset;
+            }
+            else
+                return 0;
+        }
         private Int32 FindPCSX2Offset(Byte[] bytes)
         {
             if (PCSX2.mProc.Process != null)

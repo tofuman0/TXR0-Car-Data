@@ -79,11 +79,11 @@
             this.menuStripMain.ImageScalingSize = new System.Drawing.Size(20, 20);
             this.menuStripMain.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.fileToolStripMenuItem,
-            this.helpToolStripMenuItem,
-            this.developmentToolStripMenuItem});
+            this.developmentToolStripMenuItem,
+            this.helpToolStripMenuItem});
             this.menuStripMain.Location = new System.Drawing.Point(0, 0);
             this.menuStripMain.Name = "menuStripMain";
-            this.menuStripMain.Size = new System.Drawing.Size(1067, 30);
+            this.menuStripMain.Size = new System.Drawing.Size(1067, 28);
             this.menuStripMain.TabIndex = 2;
             this.menuStripMain.Text = "menuStrip1";
             // 
@@ -97,7 +97,7 @@
             this.toolStripSeparator1,
             this.exitToolStripMenuItem});
             this.fileToolStripMenuItem.Name = "fileToolStripMenuItem";
-            this.fileToolStripMenuItem.Size = new System.Drawing.Size(46, 26);
+            this.fileToolStripMenuItem.Size = new System.Drawing.Size(46, 24);
             this.fileToolStripMenuItem.Text = "File";
             // 
             // openToolStripMenuItem
@@ -149,7 +149,7 @@
             this.helpToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.aboutToolStripMenuItem});
             this.helpToolStripMenuItem.Name = "helpToolStripMenuItem";
-            this.helpToolStripMenuItem.Size = new System.Drawing.Size(55, 26);
+            this.helpToolStripMenuItem.Size = new System.Drawing.Size(55, 24);
             this.helpToolStripMenuItem.Text = "Help";
             // 
             // aboutToolStripMenuItem
@@ -165,13 +165,13 @@
             this.pullFromPCSX2ToolStripMenuItem,
             this.pushToPCSX2ToolStripMenuItem});
             this.developmentToolStripMenuItem.Name = "developmentToolStripMenuItem";
-            this.developmentToolStripMenuItem.Size = new System.Drawing.Size(113, 26);
+            this.developmentToolStripMenuItem.Size = new System.Drawing.Size(113, 24);
             this.developmentToolStripMenuItem.Text = "Development";
             // 
             // pullFromPCSX2ToolStripMenuItem
             // 
             this.pullFromPCSX2ToolStripMenuItem.Name = "pullFromPCSX2ToolStripMenuItem";
-            this.pullFromPCSX2ToolStripMenuItem.Size = new System.Drawing.Size(198, 26);
+            this.pullFromPCSX2ToolStripMenuItem.Size = new System.Drawing.Size(224, 26);
             this.pullFromPCSX2ToolStripMenuItem.Text = "Pull from PCSX2";
             this.pullFromPCSX2ToolStripMenuItem.Click += new System.EventHandler(this.pullFromPCSX2ToolStripMenuItem_Click);
             // 
@@ -179,7 +179,7 @@
             // 
             this.pushToPCSX2ToolStripMenuItem.Enabled = false;
             this.pushToPCSX2ToolStripMenuItem.Name = "pushToPCSX2ToolStripMenuItem";
-            this.pushToPCSX2ToolStripMenuItem.Size = new System.Drawing.Size(198, 26);
+            this.pushToPCSX2ToolStripMenuItem.Size = new System.Drawing.Size(224, 26);
             this.pushToPCSX2ToolStripMenuItem.Text = "Push to PCSX2";
             this.pushToPCSX2ToolStripMenuItem.Click += new System.EventHandler(this.pushToPCSX2ToolStripMenuItem_Click);
             // 
@@ -200,14 +200,14 @@
             this.advancedDataGridView.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.DisableResizing;
             this.advancedDataGridView.Dock = System.Windows.Forms.DockStyle.Fill;
             this.advancedDataGridView.FilterAndSortEnabled = true;
-            this.advancedDataGridView.Location = new System.Drawing.Point(0, 30);
+            this.advancedDataGridView.Location = new System.Drawing.Point(0, 28);
             this.advancedDataGridView.Margin = new System.Windows.Forms.Padding(4);
             this.advancedDataGridView.MultiSelect = false;
             this.advancedDataGridView.Name = "advancedDataGridView";
             this.advancedDataGridView.RightToLeft = System.Windows.Forms.RightToLeft.No;
             this.advancedDataGridView.RowHeadersWidth = 51;
             this.advancedDataGridView.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.CellSelect;
-            this.advancedDataGridView.Size = new System.Drawing.Size(1067, 498);
+            this.advancedDataGridView.Size = new System.Drawing.Size(1067, 500);
             this.advancedDataGridView.TabIndex = 6;
             this.advancedDataGridView.SortStringChanged += new System.EventHandler<Zuby.ADGV.AdvancedDataGridView.SortEventArgs>(this.advancedDataGridView_SortStringChanged);
             this.advancedDataGridView.FilterStringChanged += new System.EventHandler<Zuby.ADGV.AdvancedDataGridView.FilterEventArgs>(this.advancedDataGridView_FilterStringChanged);

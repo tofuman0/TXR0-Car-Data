@@ -388,34 +388,48 @@ namespace TXR0_Car_Data
         private void pullFromPCSX2ToolStripMenuItem_Click(object sender, EventArgs e)
         {
             String res;
-            if (paramDataManager.PCSX2.OpenProcess("pcsx2.exe", out res) == true)
+            String[] PCSX2Processes = {
+                "pcsx2.exe",
+                "pcsx2-avx2.exe"
+            };
+            foreach (String PCSX2Process in PCSX2Processes)
             {
-                dsParamData = paramDataManager.PullFromPCSX2("Car Data", paramDataManager.fsCarData);
-                if (dsParamData == null)
+                if (paramDataManager.PCSX2.OpenProcess(PCSX2Process, out res) == true)
                 {
-                    MessageBox.Show(this, "Failed to pull data from PCSX2", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
-                    return;
-                }
-                else
-                {
-                    filename = "Loaded from PCSX2";
-                    LoadDataTable(dsParamData.Tables["Car Data"]);
+                    dsParamData = paramDataManager.PullFromPCSX2("Car Data", paramDataManager.fsCarData);
+                    if (dsParamData == null)
+                    {
+                        MessageBox.Show(this, "Failed to pull data from PCSX2", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                        return;
+                    }
+                    else
+                    {
+                        filename = "Loaded from PCSX2";
+                        LoadDataTable(dsParamData.Tables["Car Data"]);
+                        return;
+                    }
                 }
             }
-            else
-                MessageBox.Show(this, "Failed to attach to PCSX2: " + res, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            MessageBox.Show(this, "Failed to attach to PCSX2", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
         }
 
         private void pushToPCSX2ToolStripMenuItem_Click(object sender, EventArgs e)
         {
             String res;
-            if (paramDataManager.PCSX2.OpenProcess("pcsx2.exe", out res) == true)
+            String[] PCSX2Processes = {
+                "pcsx2.exe",
+                "pcsx2-avx2.exe"
+            };
+            foreach (String PCSX2Process in PCSX2Processes)
             {
-                if(paramDataManager.PushToPCSX2() == false)
-                    MessageBox.Show(this, "Failed to push data to PCSX2", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                if (paramDataManager.PCSX2.OpenProcess(PCSX2Process, out res) == true)
+                {
+                    if (paramDataManager.PushToPCSX2() == false)
+                        MessageBox.Show(this, "Failed to push data to PCSX2", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    return;
+                }
             }
-            else
-                MessageBox.Show(this, "Failed to attach to PCSX2: " + res, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            MessageBox.Show(this, "Failed to attach to PCSX2", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
         }
     }
 }
